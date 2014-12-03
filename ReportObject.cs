@@ -14,8 +14,6 @@ namespace Microsoft.Office365.ReportingWebServiceClient
     {
         protected Dictionary<string, string> properties = new Dictionary<string, string>();
 
-
-        // This is a Date property
         public DateTime Date
         {
             get;

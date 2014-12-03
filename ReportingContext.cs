@@ -4,7 +4,17 @@ namespace Microsoft.Office365.ReportingWebServiceClient
 {
     public class ReportingContext
     {
+        #region Privates
+
         private static string defaultServiceEndpointUrl = "https://reports.office365.com/ecp/reportingwebservice/reporting.svc";
+
+        private ITraceLogger logger;
+
+        private IReportVisitor visitor;
+
+        #endregion Privates
+
+        #region Properties
 
         public string WebServiceUrl
         {
@@ -45,9 +55,25 @@ namespace Microsoft.Office365.ReportingWebServiceClient
             set;
         }
 
-        private ITraceLogger logger;
+        public ITraceLogger TraceLogger
+        {
+            get
+            {
+                return this.logger;
+            }
+        }
 
-        private IReportVisitor visitor;
+        public IReportVisitor ReportVisitor
+        {
+            get
+            {
+                return this.visitor;
+            }
+        }
+
+        #endregion Properties
+
+        #region Constructors
 
         public ReportingContext()
             : this(defaultServiceEndpointUrl)
@@ -62,6 +88,8 @@ namespace Microsoft.Office365.ReportingWebServiceClient
             this.DataFilter = string.Empty;
         }
 
+        #endregion Constructors
+
         public void SetLogger(ITraceLogger logger)
         {
             if (logger != null)
@@ -70,27 +98,11 @@ namespace Microsoft.Office365.ReportingWebServiceClient
             }
         }
 
-        public ITraceLogger TraceLogger
-        {
-            get
-            {
-                return this.logger;
-            }
-        }
-
         public void SetReportVisitor(IReportVisitor visitor)
         {
             if (visitor != null)
             {
                 this.visitor = visitor;
-            }
-        }
-
-        public IReportVisitor ReportVisitor
-        {
-            get
-            {
-                return this.visitor;
             }
         }
     }

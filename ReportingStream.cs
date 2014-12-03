@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Xml;
 
 namespace Microsoft.Office365.ReportingWebServiceClient
 {
     public class ReportingStream
     {
+        #region Privates
+
         private ReportingContext reportingContext;
         private string streamIdentifier = string.Empty;
         private ReportProvider reportProvider;
-
         private Type reportType;
+
+        #endregion Privates
+
+        #region Constructors
 
         /// <summary>
         ///
@@ -31,53 +37,9 @@ namespace Microsoft.Office365.ReportingWebServiceClient
             }
         }
 
-        public void setCredential(string userName, string password)
-        {
-            this.reportProvider.setCredential(userName, password);
-        }
+        #endregion Constructors
 
-        /// <summary>
-        ///
-        /// </summary>
-        public void ClearProgress()
-        {
-            StreamProgress.ClearProgress(this.streamIdentifier);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public void RetrieveData()
-        {
-            IReportVisitor visitor = new DefaultReportVisitor();
-            RetrieveData(visitor);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="visitor"></param>
-        public void RetrieveData(IReportVisitor visitor)
-        {
-            reportingContext.TraceLogger.LogInformation(string.Format("Start Retrieving Data For Report {0}", this.reportType.Name));
-
-            QueryFilter queryFilter = new QueryFilter();
-            queryFilter.QueryRange.StartDate = this.reportingContext.FromDateTime;
-            queryFilter.QueryRange.EndDate = this.reportingContext.ToDateTime;
-            queryFilter.CustomFilter = this.reportingContext.DataFilter;
-
-            StreamProgress progress = StreamProgress.GetProgress(streamIdentifier);
-            DateTime progressTimestamp = progress.TimeStamp;
-            if (queryFilter.QueryRange.StartDate < progressTimestamp)
-            {
-                queryFilter.QueryRange.StartDate = progressTimestamp;
-                queryFilter.ExcludeStartItem = true;
-            }
-
-            int totalCount = RetrieveData(visitor, queryFilter);
-
-            reportingContext.TraceLogger.LogInformation(string.Format("Retrieve Data Completed. Totally [{0}] of Data Retrieved.", totalCount));
-        }
+        #region Private methods
 
         /// <summary>
         ///
@@ -88,7 +50,9 @@ namespace Microsoft.Office365.ReportingWebServiceClient
         {
             int totalResultCount = 0;
 
-            filter.TopCount = Constants.ResultPageSize;
+            //If the TopCount is 0, then it was not specified, hence we take the constant value
+            if (filter.TopCount == 0)
+                filter.TopCount = Constants.ResultPageSize;
 
             List<XmlNode> resultNodes = reportProvider.GetResponseXml(this.reportType, filter);
 
@@ -165,6 +129,93 @@ namespace Microsoft.Office365.ReportingWebServiceClient
             progress.SaveProgress();
 
             return list;
+        }
+
+        #endregion Private methods
+
+        //public void setCredential(string userName, string password)
+        //{
+        //    this.reportProvider.setCredential(userName, password);
+        //}
+
+        /// <summary>
+        /// This is a simple method that tries to fetch 1 record of the specified report
+        /// and if 0 or 1 record return then the authN & authZ to this report is validated
+        /// otherwise throws an exception
+        /// </summary>
+        /// <returns></returns>
+        public bool ValidateAccessToReport()
+        {
+            try
+            {
+                IReportVisitor visitor = new DefaultReportVisitor();
+                int res = RetrieveData(visitor, new QueryFilter() { TopCount = 1 });
+                if (res == 0 || res == 1)
+                    return true;
+                else
+                    throw new ApplicationException("Tried to validate your credentials against the report specified, however the response we received from the server did not match what we expected to receive. Please try again.");
+            }
+            catch (Exception ex)
+            {
+                if (ex is AggregateException)
+                {
+                    if (ex.InnerException is HttpRequestException)
+                    {
+                        //Indicates that this is an HTTP request unauthorized exception
+                        if (ex.InnerException.Message.Contains("401"))
+                            return false;
+                        else
+                            throw ex;
+                    }
+                    else
+                        throw ex;
+                }
+                else
+                    throw ex;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public void ClearProgress()
+        {
+            StreamProgress.ClearProgress(this.streamIdentifier);
+        }
+
+        /// <summary>
+        /// This RetrieveData method the built-in ReportVisitor (Console)
+        /// </summary>
+        public void RetrieveData()
+        {
+            IReportVisitor visitor = new DefaultReportVisitor();
+            RetrieveData(visitor);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="visitor"></param>
+        public void RetrieveData(IReportVisitor visitor)
+        {
+            reportingContext.TraceLogger.LogInformation(string.Format("Start Retrieving Data For Report {0}", this.reportType.Name));
+
+            QueryFilter queryFilter = new QueryFilter();
+            queryFilter.QueryRange.StartDate = this.reportingContext.FromDateTime;
+            queryFilter.QueryRange.EndDate = this.reportingContext.ToDateTime;
+            queryFilter.CustomFilter = this.reportingContext.DataFilter;
+
+            StreamProgress progress = StreamProgress.GetProgress(streamIdentifier);
+            DateTime progressTimestamp = progress.TimeStamp;
+            if (queryFilter.QueryRange.StartDate < progressTimestamp)
+            {
+                queryFilter.QueryRange.StartDate = progressTimestamp;
+                queryFilter.ExcludeStartItem = true;
+            }
+
+            int totalCount = RetrieveData(visitor, queryFilter);
+
+            reportingContext.TraceLogger.LogInformation(string.Format("Retrieve Data Completed. Totally [{0}] of Data Retrieved.", totalCount));
         }
     }
 }

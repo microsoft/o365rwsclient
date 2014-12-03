@@ -14,11 +14,17 @@ namespace Microsoft.Office365.ReportingWebServiceClient
     /// <typeparam name="TReport"></typeparam>
     public class ReportProvider
     {
+        #region Privates
+
         private Uri serviceEndpointUri;
 
         private ICredentials serviceCredential;
 
         private ITraceLogger logger;
+
+        #endregion Privates
+
+        #region Constructors
 
         public ReportProvider(string serviceEndpoint, string userName, string password, ITraceLogger logger)
         {
@@ -32,40 +38,9 @@ namespace Microsoft.Office365.ReportingWebServiceClient
             this.serviceEndpointUri = new Uri(serviceEndpoint);
         }
 
-        public void setCredential(string userName, string password)
-        {
-            serviceCredential = new NetworkCredential(userName, password);
-        }
+        #endregion Constructors
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="serviceUrl"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        public List<XmlNode> GetResponseXml(Type reportType, QueryFilter filter)
-        {
-            string serviceFullUrl = string.Format("{0}/{1}{2}", serviceEndpointUri.AbsoluteUri, reportType.Name, filter.ToUrlString());
-
-            List<XmlNode> result = new List<XmlNode>();
-
-            Stream responseContent = GetResponseContent(serviceFullUrl);
-            XmlDocument doc = new XmlDocument();
-            doc.Load(responseContent);
-
-            XmlNodeList statuses = doc.DocumentElement.ChildNodes;
-
-            foreach (XmlNode n in statuses)
-            {
-                if (n.Name == "entry")
-                {
-                    XmlNode node = n.LastChild.FirstChild;
-                    result.Add(node);
-                }
-            }
-
-            return result;
-        }
+        #region Private methods
 
         /// <summary>
         ///
@@ -96,6 +71,10 @@ namespace Microsoft.Office365.ReportingWebServiceClient
                             throw new Exception("Response content is Null");
                         }
                     }
+                    catch (HttpRequestException hex)
+                    {
+                        throw hex;
+                    }
                     catch (Exception ex)
                     {
                         throw ex;
@@ -108,6 +87,80 @@ namespace Microsoft.Office365.ReportingWebServiceClient
         {
             asyncFunction.Wait();
             return asyncFunction.Result;
+        }
+
+        private async Task<Stream> GetResponseContentAsync(string serviceFullUrl)
+        {
+            logger.LogInformation(string.Format("Request URL : {0}", serviceFullUrl));
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.Credentials = serviceCredential;
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    try
+                    {
+                        HttpResponseMessage response = await client.GetAsync(serviceFullUrl);
+                        response.EnsureSuccessStatusCode();
+
+                        Stream responseContent = await response.Content.ReadAsStreamAsync();
+
+                        if (responseContent != null)
+                        {
+                            return responseContent;
+                        }
+                        else
+                        {
+                            throw new Exception("Response content is null");
+                        }
+                    }
+                    catch (HttpRequestException hex)
+                    {
+                        throw hex;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        #endregion Private methods
+
+        //public void setCredential(string userName, string password)
+        //{
+        //    serviceCredential = new NetworkCredential(userName, password);
+        //}
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="serviceUrl"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public List<XmlNode> GetResponseXml(Type reportType, QueryFilter filter)
+        {
+            string serviceFullUrl = string.Format("{0}/{1}{2}", serviceEndpointUri.AbsoluteUri, reportType.Name, filter.ToUrlString());
+
+            List<XmlNode> result = new List<XmlNode>();
+
+            Stream responseContent = GetResponseContentAsync(serviceFullUrl).Result;
+            XmlDocument doc = new XmlDocument();
+            doc.Load(responseContent);
+
+            XmlNodeList statuses = doc.DocumentElement.ChildNodes;
+
+            foreach (XmlNode n in statuses)
+            {
+                if (n.Name == "entry")
+                {
+                    XmlNode node = n.LastChild.FirstChild;
+                    result.Add(node);
+                }
+            }
+
+            return result;
         }
     }
 }

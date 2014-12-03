@@ -41,7 +41,6 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
             Used = StringUtil.TryParseInt(base.TryGetValue("Used"), 0);
             Allocated = StringUtil.TryParseInt(base.TryGetValue("Allocated"), 0);
             Total = StringUtil.TryParseInt(base.TryGetValue("Total"), 0);
-
         }
     }
 }

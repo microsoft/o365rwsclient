@@ -13,7 +13,6 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
             set;
         }
 
-
         [XmlElement]
         public int Active
         {

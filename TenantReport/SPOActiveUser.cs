@@ -13,7 +13,6 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
             set;
         }
 
-
         [XmlElement]
         public int UniqueUsers
         {
@@ -41,16 +40,14 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
             set;
         }
 
-
-    public override void LoadFromXml(XmlNode node)
-    {
-        base.LoadFromXml(node);
-        ID = StringUtil.TryParseInt64(base.TryGetValue("ID"), 0);
-        UniqueUsers = StringUtil.TryParseInt(base.TryGetValue("UniqueUsers"), 0);
-        LicensesAssigned = StringUtil.TryParseInt(base.TryGetValue("LicensesAssigned"), 0);
-        LicensesAcquired = StringUtil.TryParseInt(base.TryGetValue("LicensesAcquired"), 0);
-        TotalUsers = StringUtil.TryParseInt(base.TryGetValue("TotalUsers"), 0);
-
+        public override void LoadFromXml(XmlNode node)
+        {
+            base.LoadFromXml(node);
+            ID = StringUtil.TryParseInt64(base.TryGetValue("ID"), 0);
+            UniqueUsers = StringUtil.TryParseInt(base.TryGetValue("UniqueUsers"), 0);
+            LicensesAssigned = StringUtil.TryParseInt(base.TryGetValue("LicensesAssigned"), 0);
+            LicensesAcquired = StringUtil.TryParseInt(base.TryGetValue("LicensesAcquired"), 0);
+            TotalUsers = StringUtil.TryParseInt(base.TryGetValue("TotalUsers"), 0);
+        }
     }
-}
 }
