@@ -1,5 +1,4 @@
-﻿using Microsoft.Office365.ReportingWebServiceClient.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -29,7 +28,7 @@ namespace Microsoft.Office365.ReportingWebServiceClient
                 properties[key] = p.InnerText.ToString();
             }
 
-            this.Date = StringUtil.TryParseDateTime(TryGetValue("Date"), DateTime.MinValue);
+            this.Date = Utils.TryParseDateTime(TryGetValue("Date"), DateTime.MinValue);
         }
 
         public string ConvertToXml()

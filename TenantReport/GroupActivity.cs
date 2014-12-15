@@ -1,5 +1,4 @@
-﻿using Microsoft.Office365.ReportingWebServiceClient.Utils;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Serialization;
 
 namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
@@ -23,8 +22,8 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
         public override void LoadFromXml(XmlNode node)
         {
             base.LoadFromXml(node);
-            GroupCreated = StringUtil.TryParseInt(base.TryGetValue("GroupCreated"), 0);
-            GroupDeleted = StringUtil.TryParseInt(base.TryGetValue("GroupDeleted"), 0);
+            GroupCreated = Utils.TryParseInt(base.TryGetValue("GroupCreated"), 0);
+            GroupDeleted = Utils.TryParseInt(base.TryGetValue("GroupDeleted"), 0);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Office365.ReportingWebServiceClient.Utils;
-using System;
+﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -45,8 +44,8 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
             base.LoadFromXml(node);
             WindowsLiveID = base.TryGetValue("WindowsLiveID");
             UserName = base.TryGetValue("UserName");
-            LastLogon = StringUtil.TryParseDateTime(base.TryGetValue("LastLogon"), DateTime.MinValue);
-            DaysInactive = StringUtil.TryParseInt(base.TryGetValue("DaysInactive"), 0);
+            LastLogon = Utils.TryParseDateTime(base.TryGetValue("LastLogon"), DateTime.MinValue);
+            DaysInactive = Utils.TryParseInt(base.TryGetValue("DaysInactive"), 0);
         }
     }
 }

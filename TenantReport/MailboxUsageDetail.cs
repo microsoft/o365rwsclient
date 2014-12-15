@@ -1,5 +1,4 @@
-﻿using Microsoft.Office365.ReportingWebServiceClient.Utils;
-using System;
+﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -77,13 +76,13 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
 
             WindowsLiveID = base.TryGetValue("WindowsLiveID");
             UserName = base.TryGetValue("UserName");
-            MailboxSize = StringUtil.TryParseInt64(base.TryGetValue("MailboxSize"), 0);
-            CurrentMailboxSize = StringUtil.TryParseInt64(base.TryGetValue("CurrentMailboxSize"), 0);
-            PercentUsed = StringUtil.TryParseInt64(base.TryGetValue("PercentUsed"), 0);
+            MailboxSize = Utils.TryParseInt64(base.TryGetValue("MailboxSize"), 0);
+            CurrentMailboxSize = Utils.TryParseInt64(base.TryGetValue("CurrentMailboxSize"), 0);
+            PercentUsed = Utils.TryParseInt64(base.TryGetValue("PercentUsed"), 0);
             MailboxPlan = base.TryGetValue("MailboxPlan");
-            IsInactive = StringUtil.TryParseBoolean(base.TryGetValue("IsInactive"), false);
-            IssueWarningQuota = StringUtil.TryParseInt64(base.TryGetValue("IssueWarningQuota"), 0);
-            IsOverWarningQuota = StringUtil.TryParseBoolean(base.TryGetValue("IsOverWarningQuota"), false);
+            IsInactive = Utils.TryParseBoolean(base.TryGetValue("IsInactive"), false);
+            IssueWarningQuota = Utils.TryParseInt64(base.TryGetValue("IssueWarningQuota"), 0);
+            IsOverWarningQuota = Utils.TryParseBoolean(base.TryGetValue("IsOverWarningQuota"), false);
         }
     }
 }

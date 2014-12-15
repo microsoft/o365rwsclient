@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Microsoft.Office365.ReportingWebServiceClient.Utils
+namespace Microsoft.Office365.ReportingWebServiceClient
 {
-    public class StringUtil
+    public class Utils
     {
         /// <summary>
         ///

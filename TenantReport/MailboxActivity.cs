@@ -1,5 +1,4 @@
-﻿using Microsoft.Office365.ReportingWebServiceClient.Utils;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Serialization;
 
 namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
@@ -30,9 +29,9 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
         public override void LoadFromXml(XmlNode node)
         {
             base.LoadFromXml(node);
-            TotalNumberOfActiveMailboxes = StringUtil.TryParseInt(base.TryGetValue("TotalNumberOfActiveMailboxes"), 0);
-            AccountCreated = StringUtil.TryParseInt(base.TryGetValue("AccountCreated"), 0);
-            AccountDeleted = StringUtil.TryParseInt(base.TryGetValue("AccountDeleted"), 0);
+            TotalNumberOfActiveMailboxes = Utils.TryParseInt(base.TryGetValue("TotalNumberOfActiveMailboxes"), 0);
+            AccountCreated = Utils.TryParseInt(base.TryGetValue("AccountCreated"), 0);
+            AccountDeleted = Utils.TryParseInt(base.TryGetValue("AccountDeleted"), 0);
         }
     }
 }

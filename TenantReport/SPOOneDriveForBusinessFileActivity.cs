@@ -1,5 +1,4 @@
-﻿using Microsoft.Office365.ReportingWebServiceClient.Utils;
-using System;
+﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -127,7 +126,7 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
             base.LoadFromXml(node);
 
             UserPuid = base.TryGetValue("UserPuid");
-            DocumentId = StringUtil.TryParseGuid(base.TryGetValue("DocumentId"), Guid.Empty);
+            DocumentId = Utils.TryParseGuid(base.TryGetValue("DocumentId"), Guid.Empty);
             EventName = base.TryGetValue("EventName");
             UserDisplayName = base.TryGetValue("UserDisplayName");
             EmailAddress = base.TryGetValue("EmailAddress");

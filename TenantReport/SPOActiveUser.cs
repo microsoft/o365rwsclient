@@ -1,5 +1,4 @@
-﻿using Microsoft.Office365.ReportingWebServiceClient.Utils;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Serialization;
 
 namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
@@ -43,11 +42,11 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
         public override void LoadFromXml(XmlNode node)
         {
             base.LoadFromXml(node);
-            ID = StringUtil.TryParseInt64(base.TryGetValue("ID"), 0);
-            UniqueUsers = StringUtil.TryParseInt(base.TryGetValue("UniqueUsers"), 0);
-            LicensesAssigned = StringUtil.TryParseInt(base.TryGetValue("LicensesAssigned"), 0);
-            LicensesAcquired = StringUtil.TryParseInt(base.TryGetValue("LicensesAcquired"), 0);
-            TotalUsers = StringUtil.TryParseInt(base.TryGetValue("TotalUsers"), 0);
+            ID = Utils.TryParseInt64(base.TryGetValue("ID"), 0);
+            UniqueUsers = Utils.TryParseInt(base.TryGetValue("UniqueUsers"), 0);
+            LicensesAssigned = Utils.TryParseInt(base.TryGetValue("LicensesAssigned"), 0);
+            LicensesAcquired = Utils.TryParseInt(base.TryGetValue("LicensesAcquired"), 0);
+            TotalUsers = Utils.TryParseInt(base.TryGetValue("TotalUsers"), 0);
         }
     }
 }

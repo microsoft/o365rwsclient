@@ -95,6 +95,9 @@ namespace Microsoft.Office365.ReportingWebServiceClient
                 reportingContext.TraceLogger.LogInformation(string.Format("Retrieved [{0}] rows of data...", resultNodes.Count));
             }
 
+            StreamProgress progress = new StreamProgress(streamIdentifier, filter.QueryRange.EndDate, false);
+            progress.SaveProgress();
+
             return totalResultCount;
         }
 
@@ -125,18 +128,13 @@ namespace Microsoft.Office365.ReportingWebServiceClient
 
             visitor.VisitBatchReport();
 
-            StreamProgress progress = new StreamProgress(streamIdentifier, lastTimeStamp);
+            StreamProgress progress = new StreamProgress(streamIdentifier, lastTimeStamp, true);
             progress.SaveProgress();
 
             return list;
         }
 
         #endregion Private methods
-
-        //public void setCredential(string userName, string password)
-        //{
-        //    this.reportProvider.setCredential(userName, password);
-        //}
 
         /// <summary>
         /// This is a simple method that tries to fetch 1 record of the specified report
@@ -207,11 +205,11 @@ namespace Microsoft.Office365.ReportingWebServiceClient
 
             StreamProgress progress = StreamProgress.GetProgress(streamIdentifier);
             DateTime progressTimestamp = progress.TimeStamp;
+            
             if (queryFilter.QueryRange.StartDate < progressTimestamp)
-            {
                 queryFilter.QueryRange.StartDate = progressTimestamp;
-                queryFilter.ExcludeStartItem = true;
-            }
+
+            queryFilter.ExcludeStartItem = progress.ExcludeStartItem;
 
             int totalCount = RetrieveData(visitor, queryFilter);
 

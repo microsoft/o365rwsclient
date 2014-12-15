@@ -26,21 +26,24 @@ namespace Microsoft.Office365.ReportingWebServiceClient
             set;
         }
 
+        public bool ExcludeStartItem { get; set; }
+
         public StreamProgress(string streamName)
-            : this(streamName, DateTime.MinValue, 0)
+            : this(streamName, DateTime.MinValue, 0, false)
         {
         }
 
-        public StreamProgress(string streamName, DateTime timestamp)
-            : this(streamName, timestamp, 0)
+        public StreamProgress(string streamName, DateTime timestamp, bool excludeStartItem)
+            : this(streamName, timestamp, 0, excludeStartItem)
         {
         }
 
-        public StreamProgress(string streamName, DateTime timestamp, int skipCount)
+        public StreamProgress(string streamName, DateTime timestamp, int skipCount, bool excludeStartItem)
         {
             this.Identifier = streamName;
             this.TimeStamp = timestamp;
             this.SkipCount = skipCount;
+            this.ExcludeStartItem = excludeStartItem;
         }
 
         /// <summary>
@@ -53,8 +56,9 @@ namespace Microsoft.Office365.ReportingWebServiceClient
             string fileName = GetIdenticalFileNameForStream(this.Identifier);
             using (StreamWriter sw = new StreamWriter(fileName, false))
             {
-                sw.WriteLine(this.TimeStamp.ToString("yyyy-MM-ddTHH:mm:ss"));
+                sw.WriteLine(this.TimeStamp.ToString("yyyy-MM-ddTHH:mm:ss.ffff"));
                 sw.WriteLine(this.SkipCount);
+                sw.WriteLine(this.ExcludeStartItem);
             }
         }
 
@@ -73,7 +77,7 @@ namespace Microsoft.Office365.ReportingWebServiceClient
         /// <param name="streamName"></param>
         public static void ClearProgress(string streamName)
         {
-            StreamProgress progress = new StreamProgress(streamName, DateTime.MinValue);
+            StreamProgress progress = new StreamProgress(streamName, DateTime.MinValue, false);
             progress.ClearProgress();
         }
 
@@ -109,6 +113,16 @@ namespace Microsoft.Office365.ReportingWebServiceClient
                     catch
                     {
                         progress.SkipCount = 0;
+                    }
+
+                    string exclStr = sr.ReadLine();
+                    try
+                    {
+                        progress.ExcludeStartItem = bool.Parse(exclStr);
+                    }
+                    catch
+                    {
+                        progress.ExcludeStartItem = false;
                     }
                 }
             }
