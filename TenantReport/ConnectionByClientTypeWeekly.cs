@@ -3,7 +3,7 @@
 namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
 {
     [Serializable]
-    public class ConnectionByClientTypeWeekly : ConnectionByClientType
+    public class ConnectionbyClientTypeWeekly : ConnectionByClientType
     {
     }
 }

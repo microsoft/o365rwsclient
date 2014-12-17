@@ -1,5 +1,4 @@
-﻿using Microsoft.Office365.ReportingWebServiceClient.Utils;
-using System;
+﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -29,9 +28,9 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
 
             Name = base.TryGetValue("Name");
             Version = base.TryGetValue("Version");
-            Count = StringUtil.TryParseInt64(base.TryGetValue("Count"), 0);
+            Count = Utils.TryParseInt64(base.TryGetValue("Count"), 0);
             Category = base.TryGetValue("Category");
-            DisplayOrder = StringUtil.TryParseInt(base.TryGetValue("DisplayOrder"), 0);
+            DisplayOrder = Utils.TryParseInt(base.TryGetValue("DisplayOrder"), 0);
         }
     }
 }

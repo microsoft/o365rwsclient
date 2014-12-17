@@ -1,5 +1,4 @@
-﻿using Microsoft.Office365.ReportingWebServiceClient.Utils;
-using System;
+﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -34,9 +33,9 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
 
             Name = base.TryGetValue("Name");
             Version = base.TryGetValue("Version");
-            Count = StringUtil.TryParseInt64(base.TryGetValue("Count"), 0);
-            LastAccessTime = StringUtil.TryParseDateTime(base.TryGetValue("LastAccessTime"), DateTime.MinValue);
-            ObjectId = StringUtil.TryParseGuid(base.TryGetValue("ObjectId"), Guid.Empty);
+            Count = Utils.TryParseInt64(base.TryGetValue("Count"), 0);
+            LastAccessTime = Utils.TryParseDateTime(base.TryGetValue("LastAccessTime"), DateTime.MinValue);
+            ObjectId = Utils.TryParseGuid(base.TryGetValue("ObjectId"), Guid.Empty);
             UPN = base.TryGetValue("UPN");
             DisplayName = base.TryGetValue("DisplayName");
         }

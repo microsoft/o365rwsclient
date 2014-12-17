@@ -1,5 +1,4 @@
-﻿using Microsoft.Office365.ReportingWebServiceClient.Utils;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Serialization;
 
 namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
@@ -25,7 +24,7 @@ namespace Microsoft.Office365.ReportingWebServiceClient.TenantReport
             WindowsLiveID = base.TryGetValue("WindowsLiveID");
             UserName = base.TryGetValue("UserName");
             ClientType = base.TryGetValue("ClientType");
-            Count = StringUtil.TryParseInt64(base.TryGetValue("Count"), 0);
+            Count = Utils.TryParseInt64(base.TryGetValue("Count"), 0);
         }
     }
 }
