@@ -8,6 +8,8 @@ namespace Microsoft.Office365.ReportingWebServiceClient
     /// </summary>
     public class StreamProgress
     {
+        #region Properties
+
         public string Identifier
         {
             get;
@@ -28,23 +30,49 @@ namespace Microsoft.Office365.ReportingWebServiceClient
 
         public bool ExcludeStartItem { get; set; }
 
-        public StreamProgress(string streamName)
-            : this(streamName, DateTime.MinValue, 0, false)
+        public string FilePath { get; set; }
+
+        #endregion Properties
+
+        #region Constructors
+
+        public StreamProgress(string filePath, string streamName)
+            : this(filePath, streamName, DateTime.MinValue, 0, false)
         {
         }
 
-        public StreamProgress(string streamName, DateTime timestamp, bool excludeStartItem)
-            : this(streamName, timestamp, 0, excludeStartItem)
+        public StreamProgress(string filePath, string streamName, DateTime timestamp, bool excludeStartItem)
+            : this(filePath, streamName, timestamp, 0, excludeStartItem)
         {
         }
 
-        public StreamProgress(string streamName, DateTime timestamp, int skipCount, bool excludeStartItem)
+        public StreamProgress(string filePath, string streamName, DateTime timestamp, int skipCount, bool excludeStartItem)
         {
+            this.FilePath = filePath;
             this.Identifier = streamName;
             this.TimeStamp = timestamp;
             this.SkipCount = skipCount;
             this.ExcludeStartItem = excludeStartItem;
         }
+
+        #endregion Constructors
+
+        #region Private methods
+
+        /// <summary>
+        /// Returns the file name only if FilePath property is null or empty
+        /// or Returns file name with full path if a FilePath is specified
+        /// </summary>
+        /// <returns></returns>
+        private string GetIdenticalFileNameAndPathForStream()
+        {
+            if (String.IsNullOrWhiteSpace(this.FilePath))
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, string.Format("{0}.progress", this.Identifier.Replace(":", "-").Replace("/", "")));
+            else
+                return Path.Combine(this.FilePath, string.Format("{0}.progress", this.Identifier.Replace(":", "-").Replace("/", "")));
+        }
+
+        #endregion Private methods
 
         /// <summary>
         ///
@@ -53,7 +81,7 @@ namespace Microsoft.Office365.ReportingWebServiceClient
         /// <param name="timestamp"></param>
         public void SaveProgress()
         {
-            string fileName = GetIdenticalFileNameForStream(this.Identifier);
+            string fileName = GetIdenticalFileNameAndPathForStream();
             using (StreamWriter sw = new StreamWriter(fileName, false))
             {
                 sw.WriteLine(this.TimeStamp.ToString("yyyy-MM-ddTHH:mm:ss.ffff"));
@@ -62,34 +90,36 @@ namespace Microsoft.Office365.ReportingWebServiceClient
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void ClearProgress()
         {
-            string fileName = GetIdenticalFileNameForStream(this.Identifier);
+            string fileName = GetIdenticalFileNameAndPathForStream();
             if (File.Exists(fileName))
             {
                 File.Delete(fileName);
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="streamName"></param>
-        public static void ClearProgress(string streamName)
-        {
-            StreamProgress progress = new StreamProgress(streamName, DateTime.MinValue, false);
-            progress.ClearProgress();
-        }
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <param name="streamName"></param>
+        //public static void ClearProgress(string streamName)
+        //{
+        //    StreamProgress progress = new StreamProgress(streamName, DateTime.MinValue, false);
+        //    progress.ClearProgress();
+        //}
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="streamName"></param>
         /// <returns></returns>
-        public static StreamProgress GetProgress(string streamName)
+        public StreamProgress GetProgress()
         {
-            string fileName = GetIdenticalFileNameForStream(streamName);
-            StreamProgress progress = new StreamProgress(streamName);
+            string fileName = GetIdenticalFileNameAndPathForStream();
 
             if (File.Exists(fileName))
             {
@@ -98,46 +128,36 @@ namespace Microsoft.Office365.ReportingWebServiceClient
                     string dateStr = sr.ReadLine();
                     try
                     {
-                        progress.TimeStamp = DateTime.Parse(dateStr);
+                        this.TimeStamp = DateTime.Parse(dateStr);
                     }
                     catch
                     {
-                        progress.TimeStamp = DateTime.MinValue;
+                        this.TimeStamp = DateTime.MinValue;
                     }
 
                     string skipStr = sr.ReadLine();
                     try
                     {
-                        progress.SkipCount = int.Parse(skipStr);
+                        this.SkipCount = int.Parse(skipStr);
                     }
                     catch
                     {
-                        progress.SkipCount = 0;
+                        this.SkipCount = 0;
                     }
 
                     string exclStr = sr.ReadLine();
                     try
                     {
-                        progress.ExcludeStartItem = bool.Parse(exclStr);
+                        this.ExcludeStartItem = bool.Parse(exclStr);
                     }
                     catch
                     {
-                        progress.ExcludeStartItem = false;
+                        this.ExcludeStartItem = false;
                     }
                 }
             }
 
-            return progress;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="streamName"></param>
-        /// <returns></returns>
-        private static string GetIdenticalFileNameForStream(string streamName)
-        {
-            return string.Format("{0}.progress", streamName.Replace(":", "-").Replace("/", ""));
+            return this;
         }
     }
 }
