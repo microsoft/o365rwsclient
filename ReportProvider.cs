@@ -100,10 +100,10 @@ namespace Microsoft.Office365.ReportingWebServiceClient
                 {
                     try
                     {
-                        HttpResponseMessage response = await client.GetAsync(serviceFullUrl);
+                        HttpResponseMessage response = await client.GetAsync(serviceFullUrl).ConfigureAwait(false);
                         response.EnsureSuccessStatusCode();
 
-                        Stream responseContent = await response.Content.ReadAsStreamAsync();
+                        Stream responseContent = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
                         if (responseContent != null)
                         {
